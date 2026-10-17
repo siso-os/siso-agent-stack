@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { unlinkSync, writeFileSync } from 'node:fs';
+import { readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
@@ -28,5 +28,19 @@ test('privacy verifier rejects unexpected binary publishables', () => {
     assert.match(result.stderr, /unexpected binary publishable/);
   } finally {
     unlinkSync(fixture);
+  }
+});
+
+
+test('privacy verifier rejects modified approved artwork', () => {
+  const fixture = join(root, '.github', 'assets', 'logo.png');
+  const original = readFileSync(fixture);
+  try {
+    writeFileSync(fixture, Buffer.concat([original, Buffer.from([0])]));
+    const result = spawnSync(process.execPath, [verifier], { cwd: root, encoding: 'utf8' });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /logo\.png: unexpected binary publishable/);
+  } finally {
+    writeFileSync(fixture, original);
   }
 });

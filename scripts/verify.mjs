@@ -2,9 +2,16 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 const root = resolve(import.meta.dirname, '..');
 const manifest = JSON.parse(readFileSync(join(root, 'stack.manifest.json'), 'utf8'));
+// Exact existing repository artwork; unknown or changed binaries still fail.
+const artwork = {
+  ".github/assets/preview.gif": "15efe0a67ff4ff604348dd70759b44f6a55870cf499dfbaf772893845b626e18",
+  ".github/assets/logo.png": "6da3b74554b2b8b6dc59d75c8d034c9ff8f73ff90dd1573671b888553d9a8ff0",
+  ".github/assets/cover.png": "889a596b305a3b9a8f63da59f3fd187d74d584b45bf62b0b96c81118d109ca2b"
+};
 const failures = [];
 const ids = new Set();
 const privatePatterns = [
@@ -46,6 +53,7 @@ for (const relative of inventory.stdout.split('\n').filter(Boolean)) {
   if (forbiddenNames.test(relative)) failures.push(`${relative}: forbidden publishable filename`);
   const source = readFileSync(join(root, relative));
   if (source.includes(0)) {
+    if (artwork[relative] === createHash('sha256').update(source).digest('hex')) continue;
     failures.push(`${relative}: unexpected binary publishable`);
     continue;
   }
