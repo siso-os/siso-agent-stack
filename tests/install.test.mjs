@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -13,8 +13,9 @@ function run(home, operation) {
   return spawnSync(process.execPath, [cli, operation, '--home', home, '--source-root', sourceRoot, '--required-only'], { encoding: 'utf8' });
 }
 
-test('clean install is backup-stable and doctor rejects receipt omission and dirty pins', () => {
+test('clean install is backup-stable and doctor rejects receipt omission and dirty pins', (t) => {
   const home = mkdtempSync(join(tmpdir(), 'siso-stack-test-'));
+  t.after(() => rmSync(home, { recursive: true }));
   assert.equal(run(home, 'install').status, 0);
   assert.equal(run(home, 'install').status, 0);
   assert.equal(run(home, 'doctor').status, 0);
