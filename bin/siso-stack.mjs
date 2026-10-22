@@ -7,6 +7,7 @@ import { homedir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { installSkill, skillDoctor } from '../lib/skill-home.mjs';
 
 const distributionRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(readFileSync(join(distributionRoot, 'stack.manifest.json'), 'utf8'));
@@ -143,22 +144,27 @@ function lstatExists(path) {
   try { lstatSync(path); return true; } catch { return false; }
 }
 
-function installSkills() {
+function registeredSkills() {
+  const hub = repositoryPath(manifest.components.find(component => component.id === 'skills'));
+  const registry = JSON.parse(readFileSync(join(hub, 'registry/skills_registry.json'), 'utf8'));
+  const curationFile = join(hub, 'registry/curation-20261021.json');
+  const keepers = existsSync(curationFile)
+    ? new Set(JSON.parse(readFileSync(curationFile, 'utf8')).install_ids) : null;
   const sources = new Map();
-  const hub = repositoryPath(manifest.components.find((component) => component.id === 'skills'));
-  for (const skillFile of walkFor(join(hub, 'registry', 'skills'), 'SKILL.md')) {
-    sources.set(basename(dirname(skillFile)), dirname(skillFile));
+  const bundled = new Map(walkFor(join(hub, 'registry/skills'), 'SKILL.md').map(file => [basename(dirname(file)), dirname(file)]));
+  for (const entry of registry.skills) {
+    if (keepers && !keepers.has(entry.skill_id)) continue;
+    const source = entry.source_path ? resolve(distributionRoot, '../..', entry.source_path)
+      : (existsSync(join(hub, 'registry/skills', entry.category, entry.skill_id)) ? join(hub, 'registry/skills', entry.category, entry.skill_id) : bundled.get(entry.skill_id));
+    if (!existsSync(join(source, 'SKILL.md'))) throw new Error(`registered skill source unavailable: ${entry.skill_id}`);
+    for (const name of [entry.skill_id, ...(keepers ? [] : entry.aliases || [])]) sources.set(name, { source, files: entry.source_path ? entry.files.required : null });
   }
-  const playbook = repositoryPath(manifest.components.find((component) => component.id === 'playbook'));
-  if (existsSync(join(playbook, 'skills'))) {
-    for (const skillFile of walkFor(join(playbook, 'skills'), 'SKILL.md')) {
-      sources.set(basename(dirname(skillFile)), dirname(skillFile));
-    }
-  }
-  for (const [name, source] of sources) {
-    managedLink(source, join(targetHome, '.claude', 'skills', name));
-    managedLink(source, join(targetHome, '.codex', 'skills', name));
-  }
+  return sources;
+}
+
+function installSkills() {
+  const sources = registeredSkills();
+  for (const [name, { source, files }] of sources) installSkill(source, name, targetHome, files);
   return sources.size;
 }
 
@@ -363,22 +369,10 @@ function doctor() {
   }
   const installedIds = new Set(components.map((component) => component.id));
   if (installedIds.has('skills') && installedIds.has('playbook')) {
-    const skillSources = new Map();
-    for (const skillFile of walkFor(join(repositoryPath(componentById.get('skills')), 'registry', 'skills'), 'SKILL.md')) {
-      skillSources.set(basename(dirname(skillFile)), dirname(skillFile));
-    }
-    const playbookSkills = join(repositoryPath(componentById.get('playbook')), 'skills');
-    if (existsSync(playbookSkills)) {
-      for (const skillFile of walkFor(playbookSkills, 'SKILL.md')) {
-        skillSources.set(basename(dirname(skillFile)), dirname(skillFile));
-      }
-    }
-    for (const [name, source] of skillSources) {
-      for (const host of ['.claude', '.codex']) {
-        const destination = join(targetHome, host, 'skills', name);
-        if (!exactManagedLink(source, destination)) failures.push(`missing exact ${host} skill link: ${destination}`);
-      }
-    }
+    const skillSources = registeredSkills();
+    const report = skillDoctor(targetHome);
+    failures.push(...report.issues);
+    console.log(`SKILLS ${report.skills} canonical, ${report.claude_links} Claude links, ${report.codex_duplicates} Codex duplicates`);
     if (receipt && receipt.skill_count !== skillSources.size) failures.push(`receipt skill count ${receipt.skill_count} does not match ${skillSources.size}`);
   }
   let commandCount = 0;

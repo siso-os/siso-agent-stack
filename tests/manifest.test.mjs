@@ -25,7 +25,14 @@ test('distribution accounts for every requested portable surface', () => {
 test('Claude and Codex agent roles use their host-native formats', () => {
   const claude = readdirSync(join(root, 'profiles', 'agents')).filter((name) => name.endsWith('.md')).map((name) => name.replace(/\.md$/, '')).sort();
   const codex = readdirSync(join(root, 'profiles', 'codex-agents')).filter((name) => name.endsWith('.toml')).map((name) => name.replace(/^siso-/, '').replace(/\.toml$/, '')).sort();
-  assert.deepEqual(codex, claude);
+  const claudeOnly = ['checker', 'librarian', 'runner', 'scout', 'senior-engineer', 'upgrader'];
+  assert.deepEqual(codex, claude.filter((name) => !claudeOnly.includes(name)));
+  for (const name of claudeOnly) {
+    assert.ok(claude.includes(name));
+    const text = readFileSync(join(root, 'profiles', 'agents', `${name}.md`), 'utf8');
+    assert.match(text, /^model: haiku$/m);
+    assert.match(text, /^skills: \[[^\]]+\]$/m);
+  }
   for (const name of codex) {
     const content = readFileSync(join(root, 'profiles', 'codex-agents', `siso-${name}.toml`), 'utf8');
     assert.match(content, /^name\s*=\s*"[^"]+"/m);
