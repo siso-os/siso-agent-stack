@@ -1,7 +1,0 @@
-{
-  "version": "0.1.109",
-  "releasedAt": "2026-05-10T00:00:00Z",
-  "channel": "stable",
-  "gateway": "https://shaans-mac-mini.tail100d11.ts.net:8443",
-  "notes": "Adds Autopilot Fix Loop controller with bounded validation runs, unsafe-command blocking, failure summaries, gathered repair context, scenario cards, and smoke coverage."
-}
