@@ -25,7 +25,7 @@ test('distribution accounts for every requested portable surface', () => {
 test('Claude and Codex agent roles use their host-native formats', () => {
   const claude = readdirSync(join(root, 'profiles', 'agents')).filter((name) => name.endsWith('.md')).map((name) => name.replace(/\.md$/, '')).sort();
   const codex = readdirSync(join(root, 'profiles', 'codex-agents')).filter((name) => name.endsWith('.toml')).map((name) => name.replace(/^siso-/, '').replace(/\.toml$/, '')).sort();
-  const claudeOnly = ['checker', 'librarian', 'runner', 'scout', 'senior-engineer', 'upgrader'];
+  const claudeOnly = ['checker', 'librarian', 'runner', 'scout', 'senior-engineer', 'thinker', 'upgrader'];
   assert.deepEqual(codex, claude.filter((name) => !claudeOnly.includes(name)));
   for (const name of claudeOnly) {
     assert.ok(claude.includes(name));
