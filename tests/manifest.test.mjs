@@ -26,11 +26,24 @@ test('Claude and Codex agent roles use their host-native formats', () => {
   const claude = readdirSync(join(root, 'profiles', 'agents')).filter((name) => name.endsWith('.md')).map((name) => name.replace(/\.md$/, '')).sort();
   const codex = readdirSync(join(root, 'profiles', 'codex-agents')).filter((name) => name.endsWith('.toml')).map((name) => name.replace(/^siso-/, '').replace(/\.toml$/, '')).sort();
   const claudeOnly = ['checker', 'librarian', 'runner', 'scout', 'senior-engineer', 'thinker', 'upgrader'];
-  assert.deepEqual(codex, claude.filter((name) => !claudeOnly.includes(name)));
+  // Explore replaces Claude Code's built-in Explore with a Haiku one in every login folder; it is not a SISO role.
+  const builtinOverrides = ['Explore'];
+  // Agents ported from upstream harnesses (agents/skills/hub/third_party/, listed in its ports.json) are Claude-only.
+  // Each starts with its provenance line, which is how they are told apart from SISO's own roles.
+  const ported = claude.filter((name) => /^Ported from `agents\/skills\/hub\/third_party\//m
+    .test(readFileSync(join(root, 'profiles', 'agents', `${name}.md`), 'utf8')));
+  assert.deepEqual(codex, claude.filter((name) => !claudeOnly.includes(name) && !builtinOverrides.includes(name) && !ported.includes(name)));
+  for (const name of ported) {
+    const text = readFileSync(join(root, 'profiles', 'agents', `${name}.md`), 'utf8');
+    // Claude Code reads only these model values; Cursor slugs (fast, grok-*) were mapped when the agent was ported.
+    const model = text.match(/^---\n([\s\S]*?)\n---/)[1].match(/^model:\s*(.+)$/m)?.[1].trim();
+    assert.ok(!model || ['opus', 'sonnet', 'haiku', 'fable', 'inherit'].includes(model), `${name}: model ${model}`);
+  }
   for (const name of claudeOnly) {
     assert.ok(claude.includes(name));
     const text = readFileSync(join(root, 'profiles', 'agents', `${name}.md`), 'utf8');
-    assert.match(text, /^model: haiku$/m);
+    // Haiku finds, reads and checks; a role that ships edits runs on Opus (Shaan, 14 Nov 2026).
+    assert.match(text, name === 'upgrader' ? /^model: opus$/m : /^model: haiku$/m);
     assert.match(text, /^skills: \[[^\]]+\]$/m);
   }
   for (const name of codex) {

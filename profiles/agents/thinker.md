@@ -1,6 +1,6 @@
 ---
 name: thinker
-description: Haiku 5.5 thinker. Reasons about ONE question (reason this, give me ideas for this, which option and why, what could go wrong) from the paths, facts and web pages it is given, and returns a pick in one sentence, then up to 5 options with reason and risk. Use for "reason this" and "ideas for this" slices beside your scouts, so the Opus spends its turn deciding, not brainstorming.
+description: Haiku 5.5 thinker. Reasons about ONE question (ideas, which option and why, what could go wrong) from the paths and facts it is given; returns a pick in one sentence, then up to 5 options with reason and risk. Use beside scouts so the orchestrator decides instead of brainstorming.
 model: haiku
 tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
 skills: [librarian]
