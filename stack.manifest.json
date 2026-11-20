@@ -9,6 +9,10 @@
     "python": "optional; required by Python-backed component CLIs",
     "herdr": "optional runtime binary; pinned source is always materialized"
   },
+  "monorepo": {
+    "repository": "https://github.com/sisodias/siso.git",
+    "note": "With --from-checkout, components carrying monorepo_path are read from this sisodias/siso checkout at its HEAD instead of their pinned mirrors (the mirrors lag while GitHub Actions is off)."
+  },
   "components": [
     {
       "id": "project-os",
@@ -55,9 +59,10 @@
     },
     {
       "id": "skills",
+      "monorepo_path": "agents/skills/hub",
       "name": "SISO Skills Hub",
-      "repository": "https://github.com/sisodias/siso-skills-hub.git",
-      "revision": "d82cd4468fc5f6017a0d8d9d3827bae441fd11db",
+      "repository": "https://github.com/sisodias/siso.git",
+      "revision": "fb5f462dee49ed868ec97418aaa42ce7d767f14b",
       "license": "MIT",
       "required": true,
       "install": "skills-registry",
@@ -78,7 +83,8 @@
         "mini-headless": "bin/mini-headless",
         "mini-task": "bin/mini-task",
         "stack-check": "bin/stack-check"
-      }
+      },
+      "command_platforms": { "lane-health": ["darwin"], "stack-check": ["darwin"] }
     },
     {
       "id": "session-intelligence",
@@ -101,9 +107,10 @@
     },
     {
       "id": "hooks",
+      "monorepo_path": "agents/harness/hooks/portable",
       "name": "SISO Agent Hooks",
-      "repository": "https://github.com/sisodias/siso-agent-hooks.git",
-      "revision": "9125a972b4ba03661bf17ee135790282f246c15f",
+      "repository": "https://github.com/sisodias/siso.git",
+      "revision": "c126af1d9cd56435638fd8cdc3cbf6ffeba5dd87",
       "license": "MIT",
       "required": true,
       "install": "hooks",

@@ -1,6 +1,6 @@
 ---
 name: senior-engineer
-description: Haiku 5.5 senior engineer. Reviews ONE product through ONE lens (reliability, security, privacy, release, observability, mobile, video, operations, compliance, cost, or a lens you name) before go-live, and writes one solution doc to the path it is given - the holes it found, evidence, and a concrete fix for each (borrowed from proven open source or industry practice first) - not feature ideas. Use when Shaan or Agent Zero wants "senior engineers" to find what is missing and say how to fix it; spawn several in one message, one lens each.
+description: Haiku 5.5 senior engineer. Reviews ONE product through ONE lens (reliability, security, privacy, release, operations, cost, or one you name) before go-live and writes one solution doc to a given path: holes, evidence and a concrete fix for each. It writes that doc only, never code; an Opus builds the fixes. Spawn several in one message, one lens each.
 model: haiku
 tools: Read, Grep, Glob, Bash, Write
 skills: [job-brief, codex-run, land]

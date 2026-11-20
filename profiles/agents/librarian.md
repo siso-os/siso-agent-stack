@@ -1,6 +1,6 @@
 ---
 name: librarian
-description: Haiku 5.5 librarian. Finds where something lives in Shaan's estate (repo, folder, doc, skill, tool, seat, prior research, his own words about a topic) using estate where, recall, seat, the Great Library and git history, and returns paths with a one-line description each. Use before building anything new, and before asking anyone where something is.
+description: Haiku 5.5 librarian. Finds where something lives in Shaan's estate (repo, folder, doc, skill, tool, seat, prior research, his own words) and returns paths with one line each. Use before building anything new or asking where something is.
 model: haiku
 tools: Read, Grep, Glob, Bash
 skills: [librarian]

@@ -37,6 +37,9 @@ test('clean install is backup-stable and doctor rejects receipt omission and dir
   assert.notEqual(run(home, 'doctor').status, 0);
   writeFileSync(receiptPath, originalReceipt);
 
-  writeFileSync(join(home, '.siso', 'agent-stack', 'repos', 'hooks', 'dirty.fixture'), 'dirty');
+  // A hooks pin on the monorepo lives at repos/monorepo/hooks/<monorepo_path>; a mirror pin at repos/hooks.
+  const hooksRecord = JSON.parse(originalReceipt).components.find((component) => component.id === 'hooks');
+  const hooksRoot = hooksRecord.path ? join(home, '.siso', 'agent-stack', 'repos', 'monorepo', 'hooks', hooksRecord.path) : join(home, '.siso', 'agent-stack', 'repos', 'hooks');
+  writeFileSync(join(hooksRoot, 'dirty.fixture'), 'dirty');
   assert.notEqual(run(home, 'doctor').status, 0);
 });

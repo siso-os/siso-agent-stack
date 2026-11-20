@@ -10,7 +10,11 @@ const manifest = JSON.parse(readFileSync(join(root, 'stack.manifest.json'), 'utf
 const artwork = {
   ".github/assets/preview.gif": "15efe0a67ff4ff604348dd70759b44f6a55870cf499dfbaf772893845b626e18",
   ".github/assets/logo.png": "6da3b74554b2b8b6dc59d75c8d034c9ff8f73ff90dd1573671b888553d9a8ff0",
-  ".github/assets/cover.png": "889a596b305a3b9a8f63da59f3fd187d74d584b45bf62b0b96c81118d109ca2b"
+  ".github/assets/cover.png": "889a596b305a3b9a8f63da59f3fd187d74d584b45bf62b0b96c81118d109ca2b",
+  ".github/assets/hero.webp": "b65c12fe8feba20dc764c2e01cf255b5f978b683af9409b4fe61aea71a3d61a8",
+  ".github/assets/shot-1.png": "af6330767641793326e04ca01ca73b19bee3afd00e7c29eeba1fb6f314b0a547",
+  ".github/assets/shot-2.png": "8899969f0b5e2136cb3826a24d897ef9c8f861df9a7e65e7bee61a55fb16be47",
+  ".github/assets/shot-3.png": "26859eeed2659b29db27a5a22e044ac226d2f7e3d67ecd3e2bdd8546fc112484"
 };
 const failures = [];
 const ids = new Set();

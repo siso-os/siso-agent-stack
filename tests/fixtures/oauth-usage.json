@@ -1,0 +1,62 @@
+{
+  "five_hour": null,
+  "seven_day": {
+    "utilization": 73.0,
+    "resets_at": "2026-11-17T13:00:00.077377+00:00",
+    "limit_dollars": null,
+    "used_dollars": null,
+    "remaining_dollars": null,
+    "locked_reason": null
+  },
+  "seven_day_oauth_apps": null,
+  "seven_day_opus": null,
+  "seven_day_sonnet": null,
+  "extra_usage": {
+    "is_enabled": false,
+    "monthly_limit": null,
+    "used_credits": null,
+    "utilization": null,
+    "currency": null,
+    "decimal_places": null,
+    "disabled_reason": null,
+    "user_disabled": false,
+    "spend_limit_reached": false,
+    "credits_ever_enabled": false,
+    "daily": null,
+    "weekly": null
+  },
+  "limits": [
+    {
+      "kind": "weekly_all",
+      "group": "weekly",
+      "percent": 73,
+      "severity": "normal",
+      "resets_at": "2026-11-17T13:00:00.077377+00:00",
+      "scope": null,
+      "is_active": false
+    },
+    {
+      "kind": "weekly_scoped",
+      "group": "weekly",
+      "percent": 100,
+      "severity": "critical",
+      "resets_at": "2026-11-17T13:00:00.077577+00:00",
+      "scope": {
+        "model": {
+          "id": null,
+          "display_name": "Fable"
+        },
+        "surface": null
+      },
+      "is_active": true
+    }
+  ],
+  "weekly_scoped_shares": [
+    {
+      "limit_index": 1,
+      "used_percent_of_weekly": 50,
+      "allowance_percent_of_weekly": 50
+    }
+  ],
+  "_about": "Trimmed from a real GET /api/oauth/usage answer (16 Nov 2026 09:55Z, a Max 20x seat): the fields seat-limits reads, unchanged."
+}
